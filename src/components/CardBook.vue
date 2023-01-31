@@ -5,8 +5,8 @@
                 <img src="https://api.lorem.space/image/book" class="card-img card-cover" alt="...">
             </div>
             <div class="title mt-2">
-                <h5 class="card-title">Godzilla vs Kong</h5>
-                <p class="card-title-author">Author</p>
+                <h6 class="card-title text-center">Godzilla vs Kong</h6>
+                <p class="card-title-author text-center">Author</p>
             </div>
         </a>
         <a href="#" class="card-wrap text-decoration-none" v-for="card in 10" :key="card">
@@ -14,8 +14,8 @@
                 <img src="https://api.lorem.space/image/movie" class="card-img card-cover" alt="...">
             </div>
             <div class="title mt-2">
-                <h5 class="card-title">Godzilla vs Kong</h5>
-                <p class="card-title-author">Author</p>
+                <h6 class="card-title text-center">Godzilla vs Kong</h6>
+                <p class="card-title-author text-center">Author</p>
             </div>
         </a>
         <a href="#" class="card-wrap text-decoration-none" v-for="card in 10" :key="card">
@@ -23,28 +23,12 @@
                 <img src="https://api.lorem.space/image/game" class="card-img card-cover" alt="...">
             </div>
             <div class="title mt-2">
-                <h5 class="card-title">Godzilla vs Kong</h5>
-                <p class="card-title-author">Author</p>
+                <h6 class="card-title text-center">Godzilla vs Kong</h6>
+                <p class="card-title-author text-center">Author</p>
             </div>
         </a>
     </main>
 </template>
-
-<script>
-// import { ref, onMounted } from 'vue'
-// import axios from "axios";
-
-// const img = ref("")
-
-// function randomImg() {
-//     axios.get('https://api.lorem.space/image/book', {
-//         headers: { "Access-Control-Allow-Origin": "*" }
-//     }).then(res => img.value = res.data)
-// }
-
-// randomImg();
-
-</script>
 
 <style scoped>
 main {
@@ -52,7 +36,6 @@ main {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    max-width: 1884px;
 }
 
 .card-wrap:hover {
@@ -62,6 +45,7 @@ main {
 .card-title-author {
     color: #fff;
     font-weight: 100;
+    font-size: 13px;
 }
 
 .card-wrap {
@@ -72,7 +56,7 @@ main {
 }
 
 .card {
-    width: 11rem;
+    width: 9rem;
     border: none;
     margin: 0 auto;
     transition: transform 250ms;
