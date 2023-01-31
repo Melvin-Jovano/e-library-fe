@@ -41,8 +41,11 @@
                             <chevronUp/>
                         </button>
                     </div>
-                    <span class="w-100 mt-2" v-if="!readMore">
+                    <span class="w-100 mt-2" v-if="!readMore && data.bookData.description.length > 200">
                         {{ data.bookData.description.slice(0, 200) + "..." }}
+                    </span>
+                    <span class="w-100 mt-2" v-else-if="data.bookData.description.length < 200">
+                        {{ data.bookData.description || ""}}
                     </span>
                     <span class="w-100 mt-2" v-else-if="readMore">
                         {{ data.bookData.description }}
