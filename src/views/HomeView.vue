@@ -4,9 +4,7 @@ import NavbarComponent from "../components/NavbarComponent.vue";
 </script>
 
 <template>
-	<div class="header">
-		<NavbarComponent />
-	</div>
+	<NavbarComponent />
 	<div class="container-fluid">
 		<main>
 			<div class="mt-4">
@@ -15,9 +13,3 @@ import NavbarComponent from "../components/NavbarComponent.vue";
 		</main>
 	</div>
 </template>
-
-<style scoped>
-.container-fluid {
-	max-width: 1650px;
-}
-</style>
