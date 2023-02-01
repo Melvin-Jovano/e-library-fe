@@ -1,5 +1,5 @@
 <template>
-    <div class="container" style="max-width: 1200px; padding-top: 70px;">
+    <div v-if="data.bookData !== null" class="container" style="max-width: 1200px; padding-top: 70px;">
         <div class="d-flex flex-wrap">
             <div class="imgWrapper">
                 <img :src="API_URL + data.bookData.cover" alt="Book Cover" class="h-100 w-100" style="border-radius: 25px;">
@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-    import { reactive, ref } from 'vue';
+    import { reactive, ref, onMounted } from 'vue';
     import { getBookById } from '../api/books.js';
     import { API_URL } from '../const.js';
     import chevronDown from '../assets/icons/chevronDown.vue';
@@ -66,7 +66,7 @@
     const props = defineProps(["bookId"])
     
     const data = reactive({
-        bookData : {}
+        bookData : null
     })
     const readMore = ref(false)
 
@@ -77,19 +77,20 @@
     async function getBookData(val){
         try {
             const book = await getBookById(val)
-            if(book.data.message === "SUCCESS"){
-                data.bookData = book.data.data
-                console.log(data.bookData.description.length)
+            if(book.data.message === "SUCCESS") {
+                data.bookData = book.data.data;
             } 
         } catch (error) {
-            console.log(error)
+            return;
         }
     }
-    getBookData(props.bookId)
+    onMounted(async () => {
+        await getBookData(props.bookId);
+    });
 </script>
 
 <style scoped>
-    *{
+    * {
         color: white;
     }
 
