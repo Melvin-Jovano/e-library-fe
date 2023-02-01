@@ -1,49 +1,45 @@
 <template>
     <main class="d-flex justify-content-center">
-        <a href="#" class="card-wrap text-decoration-none" v-for="card in 10" :key="card">
-            <div class="card">
-                <img src="https://api.lorem.space/image/book" class="card-img card-cover" alt="...">
-            </div>
-            <div class="title mt-2">
-                <h5 class="card-title">Godzilla vs Kong</h5>
-                <p class="card-title-author">Author</p>
-            </div>
-        </a>
-        <a href="#" class="card-wrap text-decoration-none" v-for="card in 10" :key="card">
-            <div class="card">
-                <img src="https://api.lorem.space/image/movie" class="card-img card-cover" alt="...">
-            </div>
-            <div class="title mt-2">
-                <h5 class="card-title">Godzilla vs Kong</h5>
-                <p class="card-title-author">Author</p>
-            </div>
-        </a>
-        <a href="#" class="card-wrap text-decoration-none" v-for="card in 10" :key="card">
-            <div class="card">
-                <img src="https://api.lorem.space/image/game" class="card-img card-cover" alt="...">
-            </div>
-            <div class="title mt-2">
-                <h5 class="card-title">Godzilla vs Kong</h5>
-                <p class="card-title-author">Author</p>
-            </div>
-        </a>
+        <div class="card-wrap" v-for="book in bookData" :key="book">
+            <router-link class="text-decoration-none" :to="{ name: 'details', params: { bookId: book.id } }">
+                <div class="card">
+                    <img :src="API_URL + book.cover" class="card-img card-cover" alt="...">
+                </div>
+                <div class="title mt-3">
+                    <h6 class="card-title text-center">{{ book.title }}</h6>
+                    <p class="card-title-author text-center">{{ book.author.name }}</p>
+                </div>
+            </router-link>
+        </div>
     </main>
 </template>
 
-<script>
-// import { ref, onMounted } from 'vue'
-// import axios from "axios";
+<script setup>
+import { ref, onMounted } from 'vue';
+import { getAllBook } from '../api/books.js';
+import { API_URL } from '../const.js';
 
-// const img = ref("")
+const lastPostId = ref(null);
+const limit = ref(5);
+const bookData = ref([])
 
-// function randomImg() {
-//     axios.get('https://api.lorem.space/image/book', {
-//         headers: { "Access-Control-Allow-Origin": "*" }
-//     }).then(res => img.value = res.data)
-// }
+console.log(bookData);
 
-// randomImg();
+async function getAllBookData() {
+    try {
+        const allBook = await getAllBook({ limit: limit.value })
+        if (allBook.data.message === 'SUCCESS') {
+            bookData.value = allBook.data.data.data;
+            lastPostId.value = getContents.data.data.lastId;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 
+onMounted(async () => {
+    await getAllBookData();
+});
 </script>
 
 <style scoped>
@@ -52,27 +48,30 @@ main {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    max-width: 1884px;
 }
 
-.card-wrap:hover {
-    color: #ECB365;
+.text-decoration-none:hover {
+    color: #fbc100;
+}
+
+.text-decoration-none {
+    color: #fff;
 }
 
 .card-title-author {
     color: #fff;
     font-weight: 100;
+    font-size: 13px;
 }
 
 .card-wrap {
     padding: 5px;
     float: none;
     margin-bottom: 10px;
-    color: #fff;
 }
 
 .card {
-    width: 11rem;
+    width: 9rem;
     border: none;
     margin: 0 auto;
     transition: transform 250ms;
