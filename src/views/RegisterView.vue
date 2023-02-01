@@ -6,99 +6,34 @@
 					<div class="tab-content w-50">
 						<div class="">
 							<form action="#" @submit.prevent="register()">
-								<h1 class="mb-4">Welcome To Our Library</h1>
+								<h1 class="mb-4">Join Our Library Today</h1>
 								<div class="form-outline mb-4">
-									<input type="email" id="email" class="form-control" />
-									<label class="form-label" for="email">Username</label>
+									<input v-model="username" type="text" id="username" class="form-control" />
+									<label class="form-label" for="username">Username</label>
+									<small v-if="usernameError.length > 0" class="d-block text-danger">{{usernameError}}</small>
 								</div>
-
+								
 								<div class="form-outline mb-4">
-									<input type="password" id="password" class="form-control" />
+									<input v-model="password" type="password" id="password" class="form-control" />
 									<label class="form-label" for="password">Password</label>
+									<small v-if="passwordError.length > 0" class="d-block text-danger">{{passwordError}}</small>
 								</div>
 
 								<div class="form-outline mb-4">
-									<input type="password" id="password-repeat" class="form-control" />
+									<input v-model="passwordRepeat" type="password" id="password-repeat" class="form-control" />
 									<label class="form-label" for="password-repeat">Repeat Password</label>
+									<small v-if="passwordRepeatError.length > 0" class="d-block text-danger">{{passwordRepeatError}}</small>
 								</div>
 
 								<button type="submit" class="btn btn-primary btn-block mb-4 px-3">Sign Up</button>
 
-								<div class="text-center">
-									<p>Already Have An Account? <a href="#!" class="text-white">Register</a></p>
+								<div class="text-center small">
+									<p>Already Have An Account? 
+										<RouterLink to="login" class="text-white">
+											Login
+										</RouterLink>
+									</p>
 								</div>
-							</form>
-						</div>
-						<div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
-							<form>
-							<div class="text-center mb-3">
-								<p>Sign up with:</p>
-								<button type="button" class="btn btn-secondary btn-floating mx-1">
-								<i class="fab fa-facebook-f"></i>
-								</button>
-
-								<button type="button" class="btn btn-secondary btn-floating mx-1">
-								<i class="fab fa-google"></i>
-								</button>
-
-								<button type="button" class="btn btn-secondary btn-floating mx-1">
-								<i class="fab fa-twitter"></i>
-								</button>
-
-								<button type="button" class="btn btn-secondary btn-floating mx-1">
-								<i class="fab fa-github"></i>
-								</button>
-							</div>
-
-							<p class="text-center">or:</p>
-
-							<!-- Name input -->
-							<div class="form-outline mb-4">
-								<input type="text" id="registerName" class="form-control" />
-								<label class="form-label" for="registerName">Name</label>
-							</div>
-
-							<!-- Username input -->
-							<div class="form-outline mb-4">
-								<input type="text" id="registerUsername" class="form-control" />
-								<label class="form-label" for="registerUsername">Username</label>
-							</div>
-
-							<!-- Email input -->
-							<div class="form-outline mb-4">
-								<input type="email" id="registerEmail" class="form-control" />
-								<label class="form-label" for="registerEmail">Email</label>
-							</div>
-
-							<!-- Password input -->
-							<div class="form-outline mb-4">
-								<input type="password" id="registerPassword" class="form-control" />
-								<label class="form-label" for="registerPassword">Password</label>
-							</div>
-
-							<!-- Repeat Password input -->
-							<div class="form-outline mb-4">
-								<input type="password" id="registerRepeatPassword" class="form-control" />
-								<label class="form-label" for="registerRepeatPassword">Repeat password</label>
-							</div>
-
-							<!-- Checkbox -->
-							<div class="form-check d-flex justify-content-center mb-4">
-								<input
-								class="form-check-input me-2"
-								type="checkbox"
-								value=""
-								id="registerCheck"
-								checked
-								aria-describedby="registerCheckHelpText"
-								/>
-								<label class="form-check-label" for="registerCheck">
-								I have read and agree to the terms
-								</label>
-							</div>
-
-							<!-- Submit button -->
-							<button type="submit" class="btn btn-primary btn-block mb-3">Sign in</button>
 							</form>
 						</div>
 					</div>
@@ -109,11 +44,50 @@
 </template>
 
 <script setup>
-	import { onMounted } from 'vue';
+	import { ref } from 'vue';
+	import {registerUser} from '../api/auth';
+	import router from '../router';
 
-	onMounted(() => {
-		console.log(1);
-	});
+	const username = ref('');
+	const password = ref('');
+	const passwordRepeat = ref('');
+	const passwordRepeatError = ref('');
+	const passwordError = ref('');
+	const usernameError = ref('');
+
+	async function register() {
+		try {
+			passwordRepeatError.value = '';
+			passwordError.value = '';
+			usernameError.value = '';
+
+			if(username.value.length === 0) {
+				usernameError.value = 'Username Cant Be Empty';
+				return;
+			}
+
+			if(password.value.length < 6) {
+				passwordError.value = 'Password At Least 6 Characters';
+				return;
+			}
+
+			if(password.value !== passwordRepeat.value) {
+				passwordRepeatError.value = 'Password Not Match';
+				return;
+			}
+			await registerUser({username: username.value, password: password.value});
+			await router.push({name: 'login'});
+		} catch (error) {
+			if(error.response.status === 403) {
+				usernameError.value = 'Invalid Username (No Spaces And All Lowercase)';
+			} else if(error.response.status === 409) {
+				usernameError.value = 'Username Already Taken';
+			} else if(error.response.status === 500) {
+				usernameError.value = 'An Error Has Occured';
+			}
+			return;
+		}
+	}
 </script>
 
 <style scoped>
