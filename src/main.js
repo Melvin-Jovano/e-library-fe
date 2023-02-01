@@ -10,13 +10,12 @@ import piniPluginPersistedState from 'pinia-plugin-persistedstate';
 
 let isRefresh = true;
 
-axios.interceptors.response.use(async response => {
+axios.interceptors.response.use(response => {
   return response;
 }, async (err) => {
   try {
     const originalRequest = err.config;
     if (err.response.data.message === 'EXPIRED_TOKEN') {
-      console.log(1);
       const isRefreshNewInstance = isRefresh;
   
       if (isRefreshNewInstance) {
@@ -44,8 +43,9 @@ axios.interceptors.response.use(async response => {
       localStorage.clear();
       router.go('/login');
     }
+    return Promise.reject(err);
   } catch (error) {
-    console.error(error);
+    return Promise.reject(err);
   }
 });
 

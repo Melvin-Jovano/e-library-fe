@@ -4,10 +4,8 @@ import NavbarComponent from "../components/NavbarComponent.vue";
 </script>
 
 <template>
+	<NavbarComponent />
 	<div class="container-fluid">
-		<header>
-			<NavbarComponent />
-		</header>
 		<main>
 			<div class="mt-4">
 				<CardBook />
