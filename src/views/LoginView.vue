@@ -44,7 +44,9 @@
 	import { ref } from 'vue';
 	import { login as loginUsers } from '../api/auth';
 	import router from '../router';
+	import session from '../stores/session';
 
+	const sessionStores = session();
 	const username = ref('');
 	const password = ref('');
 	const passwordError = ref('');
@@ -65,9 +67,17 @@
 				return;
 			}
 
-			await loginUsers({username: username.value, password: password.value});
+			const getUser = await loginUsers({username: username.value, password: password.value});
+			sessionStores.name = getUser.data.data.name;
+			sessionStores.photo = getUser.data.data.photo;
+			sessionStores.username = getUser.data.data.username;
+			sessionStores.userId = getUser.data.data.userId;
+			localStorage.setItem('accessToken', getUser.data.data.accessToken);
+			localStorage.setItem('role', getUser.data.data.role);
+			localStorage.setItem('refreshToken', getUser.data.data.refreshToken);
 			await router.push({name: 'home'});
 		} catch (error) {
+			console.error(error);
 			if(error.response.status === 404) {
 				usernameError.value = 'No Account Found';
 			} else if(error.response.status === 500) {
