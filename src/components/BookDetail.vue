@@ -1,5 +1,7 @@
 <template>
-    <div v-if="data.bookData !== null" class="container" style="max-width: 1200px; padding-top: 70px;">
+    <NavbarComponent />
+
+    <div v-if="data.bookData !== null" class="container pt-5" style="max-width: 1200px;">
         <div class="d-flex flex-wrap">
             <div class="imgWrapper">
                 <img :src="API_URL + data.bookData.cover" alt="Book Cover" class="h-100 w-100" style="border-radius: 25px;">
@@ -25,8 +27,9 @@
                     </div>
                 </div>
                 <div class="my-3" style="min-height: 50px;">
-                    <button type="button" class="rounded-pill border-0 d-flex align-items-center borrowBtn bgHover lh-sm fw-bold text-white h-100">
-                        Borrow Book
+                    <button @click="order()" type="button" :class="`${isAlreadyBorrow ? 'bg-disabled' : 'bgHover'} rounded-pill border-0 d-flex align-items-center borrowBtn lh-sm fw-bold text-white h-100`" :disabled="isAlreadyBorrow || data.bookData.stock === 0">
+                        <span class="bg-transparent" v-if="isAlreadyBorrow">Book Already Borrowed</span>
+                        <span class="bg-transparent" v-else>Borrow Book</span>
                     </button>
                 </div>
                 <div class="d-flex flex-column mt-4">
@@ -60,23 +63,29 @@
     import { reactive, ref, onMounted } from 'vue';
     import { getBookById } from '../api/books.js';
     import { API_URL } from '../const.js';
+    import NavbarComponent from './NavbarComponent.vue';
     import chevronDown from '../assets/icons/chevronDown.vue';
     import chevronUp from '../assets/icons/chevronUp.vue';
+    import { getOrderByUserIdAndBookId } from '../api/order';
+    import {orderSocket} from '../main';
+    import session from '../stores/session';
 
+    const sessionStores = session();
     const props = defineProps(["bookId"])
-    
+    const isAlreadyBorrow = ref(false);
+
     const data = reactive({
         bookData : null
     })
     const readMore = ref(false)
 
     function showReadMore(){
-        readMore.value = !readMore.value
+        readMore.value = !readMore.value;
     }
 
     async function getBookData(val){
         try {
-            const book = await getBookById(val)
+            const book = await getBookById(val);
             if(book.data.message === "SUCCESS") {
                 data.bookData = book.data.data;
             } 
@@ -84,8 +93,31 @@
             return;
         }
     }
+
+    async function order() {
+        try {
+            orderSocket.socket.emit('create-order', {
+                userId: sessionStores.userId,
+                bookId: parseInt(props.bookId)
+            });
+            isAlreadyBorrow.value = true;
+        } catch (error) {
+            return;
+        }
+    }
+
     onMounted(async () => {
-        await getBookData(props.bookId);
+        try {
+            await getBookData(props.bookId);
+            const getOrder = await getOrderByUserIdAndBookId({bookId: props.bookId});
+            if(getOrder.data.message === 'SUCCESS') {
+                if(getOrder.data.data !== null) {
+                    isAlreadyBorrow.value = true;
+                }
+            }
+        } catch (error) {
+            return;
+        }
     });
 </script>
 
@@ -107,7 +139,6 @@
     }
 
     .borrowBtn{
-        margin-bottom: 12px;
         min-width: 36px;
         min-height: 36px;
         padding: 0 30px;
@@ -117,6 +148,9 @@
 
     .bgHover:hover{
         background-color: rgba(207, 185, 151, 0.8) !important;
+    }
+    .bg-disabled{
+        background-color: rgba(207, 185, 151, 0.406) !important;
     }
 
     .bgReadMore{

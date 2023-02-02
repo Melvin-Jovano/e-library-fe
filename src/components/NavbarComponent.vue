@@ -1,52 +1,73 @@
 <template>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">E-Library</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn text-white" type="submit">Search</button>
-                </form>
-            </div>
+    <nav class="w-100 shadow navbar navbar-expand-lg position-fixed bg-navbar px-5 nav">
+        <a class="bg-navbar navbar-brand text-white fw-bold" href="#">INSOMNIA</a>
+        <button class="shadow border-dark navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav text-white w-100">
+                <li class="nav-item w-100">
+                    <RouterLink class="nav-link text-white fw-bold" to="/">Books</RouterLink>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link text-white cursor-pointer">
+                        <img :src="API_URL + sessionStores.photo" width="25" class="rounded-circle" alt="">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link text-white cursor-pointer">
+                        <small>
+                            {{sessionStores.username}}
+                        </small>
+                    </span>
+                </li>
+                <li class="nav-item mx-3">
+                    <RouterLink to="/">
+                        <span class="nav-link text-white position-relative">
+                            <CartIcon />
+                            <span v-if="appStores.orderCount > 0" class="badge bg-info rounded px-1 position-absolute text-xxs">
+                                {{appStores.orderCount}}    
+                            </span>
+                        </span>
+                    </RouterLink>
+                </li>
+                <li class="nav-item mx-3">
+                    <span class="nav-link text-white fw-bold cursor-pointer" @click="logout()">Logout</span>
+                </li>
+            </ul>
         </div>
     </nav>
+    <div class="mb-5">&nbsp;</div>
 </template>
 
+<script setup>
+    import session from '../stores/session';
+    import { API_URL } from '../const';
+    import CartIcon from '../assets/icons/Cart.vue';
+    import { logout as logoutAPI } from '../api/auth';
+    import app from '../stores/app';
+    import router from '../router';
+
+    const appStores = app();
+    const sessionStores = session();
+
+    async function logout() {
+        try {
+            await logoutAPI();
+            localStorage.clear();
+            await router.push({name: 'login'});
+        } catch (error) {
+            return;
+        }
+    }
+</script>
+
 <style scoped>
-a {
-    text-transform: uppercase;
-    font-weight: 500;
-    font-size: 18px;
-    color: #fff;
-    text-decoration: none;
-}
-
-.navbar-nav {
-    margin-left: 30px;
-}
-
-.navbar {
-    padding: 10px
-}
-
-.nav-item {
-    margin: 5px;
-}
-
-a:hover {
-    color: #ECB365;
-}
+    .nav {
+        z-index: 1;
+    }
+    * {
+        background-color: #0b304c;
+    }
 </style>
