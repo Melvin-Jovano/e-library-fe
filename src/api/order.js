@@ -8,3 +8,18 @@ export async function getOrderCount() {
 export async function getOrderByUserIdAndBookId({bookId}) {
     return await axios.get(`${API_URL}order/book/${bookId}`);
 }
+
+export async function getOrderByUserId({limit = 10, lastId}) {
+    const lastIdFilter = (lastId !== undefined)
+        ? {
+            last_id: lastId
+        }
+        : {};
+
+    return await axios.get(`${API_URL}order`, {
+        params: {
+            ...lastIdFilter,
+            limit
+        }
+    });
+}
