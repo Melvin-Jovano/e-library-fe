@@ -4,9 +4,9 @@
             <div class="imgWrapper">
                 <img :src="API_URL + data.bookData.cover" alt="Book Cover" class="h-100 w-100" style="border-radius: 25px;">
             </div>
-            <div class="d-flex ms-5 flex-column flex-fill" style="max-width: 800px;">
+            <div class="d-flex flex-column flex-fill" style="max-width: 770px; margin-left: 80px;">
                 <h1>{{ data.bookData.title || "Book Title" }}</h1>
-                <div class="w-50 d-flex flex-wrap pt-4">
+                <div class="w-75 d-flex flex-wrap pt-4">
                     <div class="d-flex flex-column w-50 pb-4">
                         <span class="dataLabel">Author</span>
                         <span>{{ data.bookData.author.name || "Name" }}</span>
@@ -29,7 +29,7 @@
                         Borrow Book
                     </button>
                 </div>
-                <div class="d-flex flex-column mt-4">
+                <div class="d-flex flex-column mt-4" v-if="data.bookData.description !== 'null'">
                     <div class="d-flex justify-content-between">
                         <span class="dataLabel">
                             Description
