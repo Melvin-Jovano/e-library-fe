@@ -25,7 +25,10 @@
                 <li class="nav-item mx-3">
                     <RouterLink to="/">
                         <span class="nav-link text-white position-relative">
-                            <CartIcon /><span class="badge bg-info p-1 position-absolute text-xxs">3</span>
+                            <CartIcon />
+                            <span v-if="appStores.orderCount > 0" class="badge bg-info rounded px-1 position-absolute text-xxs">
+                                {{appStores.orderCount}}    
+                            </span>
                         </span>
                     </RouterLink>
                 </li>
@@ -43,8 +46,10 @@
     import { API_URL } from '../const';
     import CartIcon from '../assets/icons/Cart.vue';
     import { logout as logoutAPI } from '../api/auth';
+    import app from '../stores/app';
     import router from '../router';
 
+    const appStores = app();
     const sessionStores = session();
 
     async function logout() {
