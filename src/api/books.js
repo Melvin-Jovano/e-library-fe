@@ -11,7 +11,7 @@ export async function getAllBook({limit, lastId}) {
 
     return await axios.get(`${API_URL}books`, {
         params: {
-            limit: limit || 10,
+            limit: limit || 100,
             ...lastIdFilter
         }
     })

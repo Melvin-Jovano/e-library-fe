@@ -5,7 +5,7 @@
                 <div class="card">
                     <img :src="API_URL + book.cover" class="card-img card-cover" alt="...">
                 </div>
-                <div class="title mt-3">
+                <div class="title mt-2">
                     <h6 class="card-title text-center">{{ book.title }}</h6>
                     <p class="card-title-author text-center">{{ book.author.name }}</p>
                 </div>
@@ -20,7 +20,7 @@ import { getAllBook } from '../api/books.js';
 import { API_URL } from '../const.js';
 
 const lastPostId = ref(null);
-const limit = ref(5);
+const limit = ref();
 const bookData = ref([])
 
 console.log(bookData);
@@ -45,9 +45,14 @@ onMounted(async () => {
 <style scoped>
 main {
     margin: auto;
+    max-width: 1700px;
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
+}
+
+.title {
+    width: 150px;
 }
 
 .text-decoration-none:hover {
