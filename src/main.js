@@ -1,6 +1,5 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-import 'bootstrap/dist/css/bootstrap.css';
 import {refreshToken, logout} from './api/auth';
 import axios from 'axios';
 import './assets/css/base.css';
