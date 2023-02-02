@@ -1,7 +1,7 @@
 <template>
     <main class="d-flex justify-content-center">
-        <div class="card-wrap" v-for="book in bookData" :key="book">
-            <router-link class="text-decoration-none" :to="{ name: 'details', params: { bookId: book.id } }">
+        <div class="card-wrap mx-2" v-for="book in bookData" :key="book">
+            <RouterLink class="text-decoration-none" :to="{ name: 'details', params: { bookId: book.id } }">
                 <div class="card">
                     <img :src="API_URL + book.cover" class="card-img card-cover" alt="...">
                 </div>
@@ -9,7 +9,7 @@
                     <h6 class="card-title text-center">{{ book.title }}</h6>
                     <p class="card-title-author text-center">{{ book.author.name }}</p>
                 </div>
-            </router-link>
+            </RouterLink>
         </div>
     </main>
 </template>
@@ -65,6 +65,7 @@ main {
 }
 
 .card-wrap {
+    max-width: 250px;
     padding: 5px;
     float: none;
     margin-bottom: 10px;

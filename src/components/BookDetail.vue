@@ -27,10 +27,19 @@
                     </div>
                 </div>
                 <div class="my-3" style="min-height: 50px;">
-                    <button @click="order()" type="button" :class="`${isAlreadyBorrow ? 'bg-disabled' : 'bgHover'} rounded-pill border-0 d-flex align-items-center borrowBtn lh-sm fw-bold text-white h-100`" :disabled="isAlreadyBorrow || data.bookData.stock === 0">
-                        <span class="bg-transparent" v-if="isAlreadyBorrow">Book Already Borrowed</span>
-                        <span class="bg-transparent" v-else>Borrow Book</span>
+                    <button v-if="isAlreadyBorrow" @click="unBorrow()" type="button" class="rounded-pill border-0 d-flex align-items-center borrowBtn lh-sm fw-bold text-white h-100 bg-danger">
+                        Cancel Borrow
                     </button>
+
+                    <template v-else>
+                        <button v-if="data.bookData.stock === 0" disabled="true" type="button" class="rounded-pill border-0 d-flex align-items-center borrowBtn lh-sm fw-bold text-white h-100 bg-dark">
+                            Out Of Stock
+                        </button>
+        
+                        <button v-else @click="order()" type="button" class="rounded-pill border-0 d-flex align-items-center borrowBtn lh-sm fw-bold text-white h-100">
+                            Borrow Book
+                        </button>
+                    </template>
                 </div>
                 <div class="d-flex flex-column mt-4">
                     <div class="d-flex justify-content-between">
@@ -61,9 +70,9 @@
 
 <script setup>
     import { reactive, ref, onMounted } from 'vue';
+    import NavbarComponent from './NavbarComponent.vue';
     import { getBookById } from '../api/books.js';
     import { API_URL } from '../const.js';
-    import NavbarComponent from './NavbarComponent.vue';
     import chevronDown from '../assets/icons/chevronDown.vue';
     import chevronUp from '../assets/icons/chevronUp.vue';
     import { getOrderByUserIdAndBookId } from '../api/order';
@@ -101,6 +110,18 @@
                 bookId: parseInt(props.bookId)
             });
             isAlreadyBorrow.value = true;
+        } catch (error) {
+            return;
+        }
+    }
+
+    async function unBorrow() {
+        try {
+            orderSocket.socket.emit('delete-order', {
+                userId: sessionStores.userId,
+                bookId: parseInt(props.bookId)
+            });
+            isAlreadyBorrow.value = false;
         } catch (error) {
             return;
         }
