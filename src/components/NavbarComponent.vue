@@ -24,7 +24,7 @@
                     </span>
                 </li>
                 <li class="nav-item mx-3">
-                    <RouterLink to="/">
+                    <RouterLink to="/order">
                         <span class="nav-link text-white position-relative">
                             <CartIcon />
                             <span v-if="appStores.orderCount > 0"

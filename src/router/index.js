@@ -3,12 +3,21 @@ import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import HomeView from '../views/HomeView.vue';
 import BookDetail from '../components/BookDetail.vue';
+import OrderView from '../views/OrderView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/books',
+      path: '/order',
+      name: 'order',
+      component: OrderView,
+      meta: {
+        middleware: [checkSession]
+      }
+    },
+    {
+      path: '/',
       name: 'home',
       component: HomeView,
       meta: {

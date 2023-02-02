@@ -1,7 +1,7 @@
 <template>
-    <main class="d-flex justify-content-center">
-        <div class="card-wrap" v-for="book in bookData" :key="book">
-            <router-link class="text-decoration-none" :to="{ name: 'details', params: { bookId: book.id } }">
+    <main class="d-flex vh-85 justify-content-center overflow-auto" @scroll="scrolledToTop($event.target)">
+        <div class="card-wrap mx-2" v-for="book in bookData" :key="book">
+            <RouterLink class="text-decoration-none" :to="{ name: 'details', params: { bookId: book.id } }">
                 <div class="card">
                     <img :src="API_URL + book.cover" class="card-img card-cover" alt="...">
                 </div>
@@ -9,7 +9,7 @@
                     <h6 class="card-title text-center">{{ book.title }}</h6>
                     <p class="card-title-author text-center">{{ book.author.name }}</p>
                 </div>
-            </router-link>
+            </RouterLink>
         </div>
     </main>
 </template>
@@ -19,21 +19,29 @@ import { ref, onMounted } from 'vue';
 import { getAllBook } from '../api/books.js';
 import { API_URL } from '../const.js';
 
-const lastPostId = ref(null);
-const limit = ref();
-const bookData = ref([])
+const limit = ref(25);
+const lastId = ref(null);
+const bookData = ref([]);
 
-console.log(bookData);
+async function scrolledToTop(div) {
+    if (div.scrollTop + div.clientHeight >= div.scrollHeight && lastId.value !== null) {
+        const allBook = await getAllBook({ limit: limit.value, lastId: lastId.value })
+        if (allBook.data.message === 'SUCCESS') {
+            bookData.value.push(...allBook.data.data.data);
+            lastId.value = allBook.data.data.lastId;
+        }
+    }
+}
 
 async function getAllBookData() {
     try {
         const allBook = await getAllBook({ limit: limit.value })
         if (allBook.data.message === 'SUCCESS') {
             bookData.value = allBook.data.data.data;
-            lastPostId.value = getContents.data.data.lastId;
+            lastId.value = allBook.data.data.lastId;
         }
     } catch (error) {
-        console.log(error);
+        return;
     }
 }
 
@@ -70,6 +78,7 @@ main {
 }
 
 .card-wrap {
+    max-width: 250px;
     padding: 5px;
     float: none;
     margin-bottom: 10px;
