@@ -40,21 +40,38 @@
                         </div>
                     </div>
                     <div class="w-75 d-flex flex-wrap pt-4">
-                        <div class="d-flex flex-column w-50 pb-4">
-                            <label for="authorName" class="dataLabel">
-                                Author
-                            </label>
-                            <input type="text" 
-                            class="form-control bg-transparent rounded-pill mt-2 text-white borderColor" 
-                            id="authorName" 
-                            :class="{'is-invalid' : error.errAuthor && !data.authorName}" 
-                            placeholder="Insert Author Name" 
-                            style="max-width: 70%;"
-                            v-model="data.authorName"
-                            required>
-                            <div class="invalid-feedback">
-                                Please Insert Author Name
+                        <div class="d-flex w-50 pb-4 position-relative">
+                            <div class="d-flex flex-column w-100">
+                                <label for="authorName" class="dataLabel">
+                                    Author
+                                </label>
+                                <select
+                                class="form-control bg-transparent rounded-pill mt-2 text-white borderColor"
+                                id="authorName"
+                                list="authorsList"
+                                :class="{'is-invalid' : error.errAuthor && !data.authorName}"
+                                style="max-width: 70%;"
+                                @change="data.authorId = $event.target.value"
+                                required>
+                                    <option :selected="!data.authorId" disabled>Select Author</option>
+                                    <option v-if="authorName !== null" :selected="authorName !== null">{{ authorName }}</option>
+                                    <option v-for="author in authorList" :value="author.id">
+                                        {{ author.name }}
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please Insert Author Name
+                                </div>
                             </div>
+                            <button type="button"
+                            class="position-absolute d-flex justify-content-center align-items-center rounded-circle bg-white" 
+                            style="top: 32%; right: 15%; padding: 6px;"
+                            title="Add Author"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addNewAuthor"
+                            >
+                                <addPerson/>
+                            </button>
                         </div>
                         <div class="d-flex flex-column w-50 pb-4">
                             <label for="publishYear" class="dataLabel">
@@ -159,20 +176,45 @@
             </div>
         </div>
     </div>
+    <div class="modal fade bg-transparent" id="addNewAuthor" tabindex="-1" aria-labelledby="addNewAuthorLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered bg-transparent">
+            <div class="modal-content d-flex flex-column">
+                <div class="ms-3 mt-3 bg-transparent text-black fs-4">
+                    Add New Author
+                </div>
+                <div class="form-floating mx-3 my-3 bg-transparent">
+                    <input type="text" class="form-control bg-transparent" id="newAuthor" placeholder="Input Name" v-model="authorName">
+                    <label for="newAuthor" class="bg-transparent text-black">Insert Name</label>
+                </div>
+                <div class="d-flex flex-row-reverse bg-transparent mb-4">
+                    <button type="button" class="btn btn-info rounded-pill me-3" @click="addAuthor" :disabled="!authorName" data-bs-dismiss="modal">
+                        Add Author
+                    </button>
+                    <button type="button" 
+                    class="btn btn-danger rounded-pill me-3 px-3" 
+                    data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
     import { reactive, ref, onMounted } from 'vue';
     import { inputBook } from '../api/books.js';
+    import { addNewAuthor, getAllAuthors } from '../api/author.js';
     import IconUpload from '../assets/icons/IconUpload.vue';
     import checkCircle from '../assets/icons/checkCircle.vue';
     import IconClose from '../assets/icons/IconClose.vue';
+    import addPerson from '../assets/icons/addPerson.vue';
 
     const initialData = {
         coverPreviewURL : null,
         coverFile : null,
         bookTitle : null,
-        authorName : null,
+        authorId : null,
         publishYear : null,
         bookPages : null,
         bookStocks : null,
@@ -191,7 +233,9 @@
     const data = reactive({...initialData})
     const error = reactive({...initialError})
    
+    const authorName = ref(null)
     const yearsList = ref([])
+    const authorList = ref([])
     const myModal = ref(null)
     const fileUpload = ref(null)
 
@@ -203,7 +247,6 @@
     }
 
     function coverPreview(event){
-        console.log("a")
         data.coverFile = event.target.files[0]
         data.coverPreviewURL = URL.createObjectURL(data.coverFile)
         fileUpload.value.value = ""
@@ -220,7 +263,7 @@
                 error.errTitle = true
                 invalid++
             }
-            if (!data.authorName){
+            if (!data.authorId){
                 error.errAuthor = true
                 invalid++
             }
@@ -242,12 +285,35 @@
         }
     }
 
+    async function addAuthor(){
+        try {
+            const author = await addNewAuthor(authorName.value)
+            if(author.data.message === "SUCCESS"){
+                data.authorId = author.data.data.id
+                getAuthors()
+            }
+        } catch (error) {
+            
+        }
+    }
+
+    async function getAuthors(){
+        try {
+            const authors = await getAllAuthors()
+            if(authors.data.message === "SUCCESS"){
+                authorList.value = authors.data.data
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async function addBook(){
         if(checkInput() === 0){
             try {
                 const newBook = await inputBook(data)
                 if(newBook.data.message === "SUCCESS"){
-                    URL.revokeObjectURL(data.coverPreviewURL)
+                    authorName.value = null
                     Object.assign(data, initialData)
                     Object.assign(error, initialError)
                     myModal.value.show()
@@ -260,6 +326,7 @@
     
     onMounted(async () => {
         getYears()
+        await getAuthors()
         myModal.value = new bootstrap.Modal("#successModal", {})
     });
 </script>

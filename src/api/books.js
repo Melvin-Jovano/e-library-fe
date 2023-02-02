@@ -14,7 +14,7 @@ export async function inputBook(data){
     formData.append("pages", data.bookPages)
     formData.append("stock", data.bookStocks)
     formData.append("description", data.description)
-    formData.append("authorName", data.authorName)
+    formData.append("authorId", data.authorId)
     const newBook = await axios.post(`${API_URL}book`, formData, {
         headers:{
             'Content-Type' : 'multipart/form-data'
