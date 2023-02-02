@@ -1,7 +1,11 @@
 <template>
     <NavbarComponent />
     
-    <main class="d-flex justify-content-center">
+    <div v-if="orders.length === 0" class="text-center container text-white h1">
+        ~ No Orders Found ~
+    </div>
+
+    <main v-else class="d-flex justify-content-center">
         <div class="card-wrap mx-2" v-for="order in orders" :key="order.id">
             <RouterLink class="text-decoration-none" :to="{ name: 'details', params: { bookId: order.book.id } }">
                 <div class="card">

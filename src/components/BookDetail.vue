@@ -110,6 +110,7 @@
                 bookId: parseInt(props.bookId)
             });
             isAlreadyBorrow.value = true;
+            data.bookData.stock--;
         } catch (error) {
             return;
         }
@@ -122,6 +123,7 @@
                 bookId: parseInt(props.bookId)
             });
             isAlreadyBorrow.value = false;
+            data.bookData.stock++;
         } catch (error) {
             return;
         }
