@@ -2,7 +2,7 @@
 	<NavbarComponent />
 	<div class="container-fluid">
 		<main>
-			<div class="mt-4">
+			<div class="mt-4 container">
 				<CardBook />
 			</div>
 		</main>
@@ -15,6 +15,7 @@
 	import NavbarComponent from "../components/NavbarComponent.vue";
 	import app from '../stores/app';
 	import {getOrderCount} from '../api/order';
+	import { orderSocket } from "../main";
 
 	const appStores = app();
 
@@ -22,6 +23,7 @@
 		try {
 			const orderCount = await getOrderCount();
 			appStores.orderCount = orderCount.data.data;
+			orderSocket.connect();
 		} catch (error) {
 			return;
 		}

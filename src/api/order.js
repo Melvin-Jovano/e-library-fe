@@ -12,7 +12,7 @@ export async function getOrderByUserIdAndBookId({bookId}) {
 export async function getOrderByUserId({limit = 10, lastId}) {
     const lastIdFilter = (lastId !== undefined)
         ? {
-            lastId
+            last_id: lastId
         }
         : {};
 
