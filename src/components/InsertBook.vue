@@ -1,6 +1,11 @@
 <template>
     <div class="container" style="max-width: 1200px; padding-top: 50px;">
-        <h1 class="mb-4">
+        <div class="position-absolute" style="top: 20px;">
+            <div class="rounded-circle backButton bgHover" @click="back">
+                <IconBack/>
+            </div>
+        </div>
+        <h1 class="my-4">
             Insert Book
         </h1>
         <form @submit.prevent="addBook" class="needs-validation" novalidate>
@@ -212,8 +217,10 @@
 
 <script setup>
     import { reactive, ref, onMounted } from 'vue';
+    import { useRouter } from 'vue-router';
     import { inputBook } from '../api/books.js';
     import { addNewAuthor, getAllAuthors } from '../api/author.js';
+    import IconBack from '../assets/icons/IconBack.vue';
     import IconUpload from '../assets/icons/IconUpload.vue';
     import checkCircle from '../assets/icons/checkCircle.vue';
     import IconClose from '../assets/icons/IconClose.vue';
@@ -249,6 +256,12 @@
     const successModal = ref(null)
     const authorModal = ref(null)
     const fileUpload = ref(null)
+
+    const router = useRouter()
+
+    function back(){
+        router.go(-1)
+    }
 
     function getYears(){
         const currentYear = new Date().getFullYear();
@@ -351,6 +364,15 @@
 <style scoped>
     * {
         color: white;
+    }
+
+    .backButton{
+        min-width: 34px;
+        min-height: 34px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
     }
     
     .dataLabel{
