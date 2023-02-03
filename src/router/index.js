@@ -64,7 +64,7 @@ const router = createRouter({
       name: 'insert',
       component: InsertBook,
       meta:{
-        middleware: [checkSession]
+        middleware: [checkSession, checkAdmin]
       }
     }
   ]

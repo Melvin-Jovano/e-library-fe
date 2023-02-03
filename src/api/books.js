@@ -40,11 +40,10 @@ export async function inputBook(data){
 }
 
 export async function updateBook(id, val){
-    const book = await axios.put(`${API_URL}updatebook`,{
+    return await axios.put(`${API_URL}updatebook`,{
         bookId : id,
         stock : val
-    })
-    return book
+    });
 }
 
 export async function deleteBook(id){

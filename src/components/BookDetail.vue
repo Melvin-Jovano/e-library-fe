@@ -230,9 +230,9 @@
 
     async function updateBookData(){
         try {
-            const update = await updateBook(props.bookId, editStock.value)
+            const update = await updateBook(parseInt(props.bookId), parseInt(editStock.value));
             if(update.data.message === "SUCCESS"){
-                data.bookData.stock = update.data.data.stock
+                data.bookData.stock = update.data.data.stock;
                 updateModal.value.hide()
             }
         } catch (error) {
