@@ -1,6 +1,44 @@
+* {
+    background-color: #051522;
+}
+.vh-65 {
+    height: 65vh;
+}
+.vh-70 {
+    height: 70vh;
+}
+.vh-85 {
+    height: 85vh;
+}
+.text-xxs {
+    font-size: .6rem
+}
 .text-sm {
     font-size: .85rem;
 }
 .text-xs {
-    font-size: .8rem;
+    font-size: .7rem;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

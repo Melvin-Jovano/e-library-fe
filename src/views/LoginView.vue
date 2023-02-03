@@ -77,7 +77,6 @@
 			localStorage.setItem('refreshToken', getUser.data.data.refreshToken);
 			await router.push({name: 'home'});
 		} catch (error) {
-			console.error(error);
 			if(error.response.status === 404) {
 				usernameError.value = 'No Account Found';
 			} else if(error.response.status === 500) {
