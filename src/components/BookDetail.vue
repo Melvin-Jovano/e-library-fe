@@ -1,18 +1,12 @@
 <template>
-    <<<<<<< books-2
-        <div v-if="data.bookData !== null" class="container position-relative" style="max-width: 1200px; padding-top: 70px;">
-            <div class="position-absolute" style="top: 20px;">
-                <div class="rounded-circle backButton bgHover" @click="back">
-                    <IconBack/>
-                </div>
+    <div v-if="data.bookData !== null" class="container position-relative" style="max-width: 1200px; padding-top: 70px;">
+        <div class="position-absolute" style="top: 20px;">
+            <div class="rounded-circle backButton bgHover" @click="back">
+                <IconBack/>
             </div>
-            <div class="d-flex flex-wrap mt-4">
-    =======
-        <NavbarComponent />
-    
-        <div v-if="data.bookData !== null" class="container pt-5" style="max-width: 1200px;">
+        </div>
+        <div class="d-flex flex-wrap mt-4">
             <div class="d-flex flex-wrap">
-    >>>>>>> master-2
                 <div class="imgWrapper">
                     <img :src="API_URL + data.bookData.cover" alt="Book Cover" class="h-100 w-100" style="border-radius: 25px;">
                 </div>
@@ -36,17 +30,12 @@
                             <span>{{ data.bookData.stock || "0" }}</span>
                         </div>
                     </div>
-    <<<<<<< books-2
+
                     <div v-if="role === 'USER'" class="my-3 d-flex" style="min-height: 50px;">
-                        <button type="button" class="rounded-pill border-0 d-flex align-items-center borrowBtn bgHover lh-sm fw-bold text-white h-100">
-                            Borrow Book
-    =======
-                    <div class="my-3" style="min-height: 50px;">
                         <button v-if="isAlreadyBorrow" @click="unBorrow()" type="button" class="rounded-pill border-0 d-flex align-items-center borrowBtn lh-sm fw-bold text-white h-100 bg-danger">
                             Cancel Borrow
-    >>>>>>> master-2
                         </button>
-    
+
                         <template v-else>
                             <button v-if="data.bookData.stock === 0" disabled="true" type="button" class="rounded-pill border-0 d-flex align-items-center borrowBtn lh-sm fw-bold text-white h-100 bg-dark">
                                 Out Of Stock
@@ -57,6 +46,7 @@
                             </button>
                         </template>
                     </div>
+
                     <div v-else-if="role === 'ADMIN'" class="my-3 d-flex" style="min-height: 50px;">
                         <button type="button" 
                         class="rounded-pill border-0 d-flex align-items-center lh-sm fw-bold text-white h-100 btn btn-warning px-4"
@@ -178,191 +168,179 @@
                 </div>
             </div>
         </div>
-    </template>
+    </div>
+</template>
     
-    <script setup>
-        import { reactive, ref, onMounted } from 'vue';
-    <<<<<<< books-2
-        import { useRouter } from 'vue-router';
-        import { getBookById, updateBook, deleteBook } from '../api/books.js';
-    =======
-        import NavbarComponent from './NavbarComponent.vue';
-        import { getBookById } from '../api/books.js';
-    >>>>>>> master-2
-        import { API_URL } from '../const.js';
-        import IconBack from '../assets/icons/IconBack.vue';
-        import chevronDown from '../assets/icons/chevronDown.vue';
-        import chevronUp from '../assets/icons/chevronUp.vue';
-    <<<<<<< books-2
-        import dashLg from '../assets/icons/dashLg.vue';
-        import plusLg from '../assets/icons/plusLg.vue';
-        import IconClose from '../assets/icons/IconClose.vue';
-        import IconWarning from '../assets/icons/IconWarning.vue';
-    =======
-        import { getOrderByUserIdAndBookId } from '../api/order';
-        import {orderSocket} from '../main';
-        import session from '../stores/session';
-    >>>>>>> master-2
-    
-        const sessionStores = session();
-        const props = defineProps(["bookId"])
-        const isAlreadyBorrow = ref(false);
-    
-        const data = reactive({
-            bookData : null
-        })
-        const readMore = ref(false)
-        const editStock = ref(null)
-        const updateModal = ref(null)
-        const deleteModal = ref(null)
-        const router = useRouter()
-    
-        const role = localStorage.getItem("role")
-    
-        function back(){
-            router.go(-1)
+<script setup>
+    import { reactive, ref, onMounted } from 'vue';
+    import { useRouter } from 'vue-router';
+    import { getBookById, updateBook, deleteBook } from '../api/books.js';
+    import { API_URL } from '../const.js';
+    import IconBack from '../assets/icons/IconBack.vue';
+    import chevronDown from '../assets/icons/chevronDown.vue';
+    import chevronUp from '../assets/icons/chevronUp.vue';
+    import dashLg from '../assets/icons/dashLg.vue';
+    import plusLg from '../assets/icons/plusLg.vue';
+    import IconClose from '../assets/icons/IconClose.vue';
+    import IconWarning from '../assets/icons/IconWarning.vue';
+    import { getOrderByUserIdAndBookId } from '../api/order';
+    import {orderSocket} from '../main';
+    import session from '../stores/session';
+
+    const sessionStores = session();
+    const props = defineProps(["bookId"])
+    const isAlreadyBorrow = ref(false);
+
+    const data = reactive({
+        bookData : null
+    })
+    const readMore = ref(false)
+    const editStock = ref(null)
+    const updateModal = ref(null)
+    const deleteModal = ref(null)
+    const router = useRouter()
+
+    const role = localStorage.getItem("role")
+
+    function back(){
+        router.go(-1)
+    }
+
+    function showReadMore(){
+        readMore.value = !readMore.value;
+    }
+
+    function subtractStock(){
+        if(editStock.value > 0){
+            editStock.value--
         }
-    
-        function showReadMore(){
-            readMore.value = !readMore.value;
+    }
+
+    async function getBookData(val){
+        try {
+            const book = await getBookById(val);
+            if(book.data.message === "SUCCESS") {
+                data.bookData = book.data.data;
+                editStock.value = data.bookData.stock
+            } 
+        } catch (error) {
+            return;
         }
-    
-        function subtractStock(){
-            if(editStock.value > 0){
-                editStock.value--
+    }
+
+    async function updateBookData(){
+        try {
+            const update = await updateBook(props.bookId, editStock.value)
+            if(update.data.message === "SUCCESS"){
+                data.bookData.stock = update.data.data.stock
+                updateModal.value.hide()
             }
+        } catch (error) {
+            console.log(error)
         }
-    
-        async function getBookData(val){
-            try {
-                const book = await getBookById(val);
-                if(book.data.message === "SUCCESS") {
-                    data.bookData = book.data.data;
-                    editStock.value = data.bookData.stock
-                } 
-            } catch (error) {
-                return;
+    }
+
+    async function deleteBookData(){
+        try {
+            const del = await deleteBook(props.bookId)
+            if(del.data.message === "SUCCESS"){
+                deleteModal.value.hide()
+                router.replace("/")
             }
+        } catch (error) {
+            
         }
-    
-    <<<<<<< books-2
-        async function updateBookData(){
-            try {
-                const update = await updateBook(props.bookId, editStock.value)
-                if(update.data.message === "SUCCESS"){
-                    data.bookData.stock = update.data.data.stock
-                    updateModal.value.hide()
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        }
-    
-        async function deleteBookData(){
-            try {
-                const del = await deleteBook(props.bookId)
-                if(del.data.message === "SUCCESS"){
-                    deleteModal.value.hide()
-                    router.replace("/")
-                }
-            } catch (error) {
-                
-            }
-        }
-        onMounted(async () => {
-            await getBookData(props.bookId);
-            updateModal.value = new bootstrap.Modal("#updateModal", {})
-            deleteModal.value = new bootstrap.Modal("#deleteModal", {})
-    =======
-        async function order() {
-            try {
-                orderSocket.socket.emit('create-order', {
-                    userId: sessionStores.userId,
-                    bookId: parseInt(props.bookId)
-                });
-                isAlreadyBorrow.value = true;
-                data.bookData.stock--;
-            } catch (error) {
-                return;
-            }
-        }
-    
-        async function unBorrow() {
-            try {
-                orderSocket.socket.emit('delete-order', {
-                    userId: sessionStores.userId,
-                    bookId: parseInt(props.bookId)
-                });
-                isAlreadyBorrow.value = false;
-                data.bookData.stock++;
-            } catch (error) {
-                return;
-            }
-        }
-    
-        onMounted(async () => {
-            try {
-                await getBookData(props.bookId);
-                const getOrder = await getOrderByUserIdAndBookId({bookId: props.bookId});
-                if(getOrder.data.message === 'SUCCESS') {
-                    if(getOrder.data.data !== null) {
-                        isAlreadyBorrow.value = true;
-                    }
-                }
-            } catch (error) {
-                return;
-            }
-    >>>>>>> master-2
+    }
+async function order() {
+    try {
+        orderSocket.socket.emit('create-order', {
+            userId: sessionStores.userId,
+            bookId: parseInt(props.bookId)
         });
-    </script>
-    
-    <style scoped>
-        * {
-            color: white;
+        isAlreadyBorrow.value = true;
+        data.bookData.stock--;
+    } catch (error) {
+        return;
+    }
+}
+
+async function unBorrow() {
+    try {
+        orderSocket.socket.emit('delete-order', {
+            userId: sessionStores.userId,
+            bookId: parseInt(props.bookId)
+        });
+        isAlreadyBorrow.value = false;
+        data.bookData.stock++;
+    } catch (error) {
+        return;
+    }
+}
+
+onMounted(async () => {
+    try {
+        await getBookData(props.bookId);
+        updateModal.value = new bootstrap.Modal("#updateModal", {});
+        deleteModal.value = new bootstrap.Modal("#deleteModal", {});
+        const getOrder = await getOrderByUserIdAndBookId({bookId: props.bookId});
+        if(getOrder.data.message === 'SUCCESS') {
+            if(getOrder.data.data !== null) {
+                isAlreadyBorrow.value = true;
+            }
         }
-    
-        .backButton{
-            min-width: 34px;
-            min-height: 34px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-    
-        .imgWrapper{
-            height: 500px;
-            width: 320px;
-            min-height: 500px;
-            min-width: 320px;
-        }
-    
-        .dataLabel{
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-    
-        .borrowBtn{
-            min-width: 36px;
-            min-height: 36px;
-            padding: 0 30px;
-            border: 1px solid rgb(207, 217, 222);
-            background-color: #CFB997;
-        }
-    
-        .bgHover:hover{
-            background-color: rgba(207, 185, 151, 0.8) !important;
-        }
-        .bg-disabled{
-            background-color: rgba(207, 185, 151, 0.406) !important;
-        }
-    
-        .bgReadMore{
-            min-width: 20px;
-            min-height: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0px;
-        }
-    </style>
+    } catch (error) {
+        return;
+    }
+});
+</script>
+
+<style scoped>
+    * {
+        color: white;
+    }
+
+    .backButton{
+        min-width: 34px;
+        min-height: 34px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .imgWrapper{
+        height: 500px;
+        width: 320px;
+        min-height: 500px;
+        min-width: 320px;
+    }
+
+    .dataLabel{
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .borrowBtn{
+        min-width: 36px;
+        min-height: 36px;
+        padding: 0 30px;
+        border: 1px solid rgb(207, 217, 222);
+        background-color: #CFB997;
+    }
+
+    .bgHover:hover{
+        background-color: rgba(207, 185, 151, 0.8) !important;
+    }
+    .bg-disabled{
+        background-color: rgba(207, 185, 151, 0.406) !important;
+    }
+
+    .bgReadMore{
+        min-width: 20px;
+        min-height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0px;
+    }
+</style>
