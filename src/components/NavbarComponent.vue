@@ -8,9 +8,18 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav text-white w-100">
-                <li class="nav-item w-100">
+                <li class="nav-item">
                     <RouterLink class="nav-link text-white fw-bold" to="/">Books</RouterLink>
                 </li>
+
+                <!-- ADMIN / USER MENUS GOES HERE -->
+                <li class="nav-item" v-if="isAdmin">
+                    <RouterLink class="nav-link text-white fw-bold" to="/user-order">Orders</RouterLink>
+                </li>
+                <!-- ADMIN / USER MENUS GOES HERE -->
+
+                <!-- DIVIDER -->
+                <li class="w-100">&nbsp;</li>
                 <li class="nav-item">
                     <div class="nav-link text-white cursor-pointer">
                         <img :src="API_URL + sessionStores.photo" width="25" class="rounded-circle" alt="">
@@ -23,7 +32,7 @@
                         </small>
                     </span>
                 </li>
-                <li class="nav-item mx-3">
+                <li class="nav-item mx-3" v-if="!isAdmin">
                     <RouterLink to="/order">
                         <span class="nav-link text-white position-relative">
                             <CartIcon />
@@ -50,9 +59,11 @@ import CartIcon from '../assets/icons/Cart.vue';
 import { logout as logoutAPI } from '../api/auth';
 import app from '../stores/app';
 import router from '../router';
+import { ref } from 'vue';
 
 const appStores = app();
 const sessionStores = session();
+const isAdmin = ref(localStorage.getItem('role') === 'ADMIN');
 
 async function logout() {
     try {

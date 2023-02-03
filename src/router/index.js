@@ -4,10 +4,19 @@ import RegisterView from '../views/RegisterView.vue';
 import HomeView from '../views/HomeView.vue';
 import BookDetail from '../components/BookDetail.vue';
 import OrderView from '../views/OrderView.vue'
+import UserOrderView from '../views/UserOrderView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/user-order',
+      name: 'user-order',
+      component: UserOrderView,
+      meta: {
+        middleware: [checkSession, checkAdmin]
+      }
+    },
     {
       path: '/order',
       name: 'order',
@@ -67,6 +76,16 @@ function middlewarePipeline (context, middleware, index) {
       nextMiddleware({ ...context, next: nextPipeline })
 
   }
+}
+
+function checkAdmin({to, from, next}) {
+  const isAdmin = localStorage.getItem('role') === 'ADMIN';
+
+  if(!isAdmin) {
+    return next({name: 'home'});
+  }
+
+  return next();
 }
 
 function checkSession({to, from, next}) {

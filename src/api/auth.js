@@ -1,6 +1,10 @@
 import axios from "axios";
 import { API_URL } from "../const.js";
 
+export async function findUsername({username}) {
+    return await axios.get(`${API_URL}auth/username/${username}`);
+}
+
 export async function registerUser({username, password}) {
     return await axios.put(`${API_URL}auth/user/register`, {
         username,
