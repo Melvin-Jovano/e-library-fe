@@ -21,7 +21,9 @@
                 </div>
             </div>
             <div class="col-6 text-end">
-                <button :disabled="!(orders.length > 0)" class="btn btn-sm btn-primary">Mark As Finished</button>
+                <button @click="finishOrder()" :disabled="!(orders.length > 0)" class="btn btn-sm btn-primary">
+                    Mark As Finished ({{ totalOrders }})
+                </button>
             </div>
         </form>
 
@@ -48,9 +50,10 @@
     import NavbarComponent from '../components/NavbarComponent.vue';
     import { API_URL } from '../const';
     import { ref } from 'vue';
-    import { getOrderByUserId } from '../api/order';
+    import { getOrderByUserId, getOrderCount } from '../api/order';
     import {debounce} from '../utils/utils';
     import {findUsername} from '../api/auth';
+import { orderSocket } from '../main';
 
     const user = ref('');
     const users = ref([]);
@@ -58,21 +61,37 @@
     const lastId = ref(null);
     const isLoad = ref(false);
     const limit = 25;
+    const totalOrders = ref(0);
+    const selectedUser = ref(null);
 
     async function findOrder(userId, username) {
         user.value = username;
-        const getOrders = await getOrderByUserId({limit, userId});
+        selectedUser.value = userId;
+        const getOrders = await getOrderByUserId({limit, userId: selectedUser.value});
         if(getOrders.data.message === 'SUCCESS') {
             orders.value = getOrders.data.data.data;
+            lastId.value = getOrders.data.data.lastId;
+            const totalOrder = await getOrderCount({userId: selectedUser.value});
+            if(totalOrder.data.message === 'SUCCESS') {
+                totalOrders.value = totalOrder.data.data;
+            }
         }
+    }
+
+    async function finishOrder() {
+        orderSocket.socket.emit('delete-order-by-user-id', selectedUser.value);
     }
 
     async function scrolledToTop(div) {
         if(div.scrollTop + div.clientHeight >= div.scrollHeight && lastId.value !== null) {
-            const userOrders = await getOrderByUserId({limit, lastId: lastId.value});
+            const userOrders = await getOrderByUserId({limit, lastId: lastId.value, userId: selectedUser.value});
             if(userOrders.data.message === 'SUCCESS') {
                 orders.value.push(...userOrders.data.data.data);
                 lastId.value = userOrders.data.data.lastId;
+                const totalOrder = await getOrderCount({userId: selectedUser.value});
+                if(totalOrder.data.message === 'SUCCESS') {
+                    totalOrders.value = totalOrder.data.data;
+                }
             }
         }
     }
