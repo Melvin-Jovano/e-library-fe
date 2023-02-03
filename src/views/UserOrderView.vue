@@ -29,6 +29,10 @@
 
         <hr>
 
+        <div class="text-center text-white fst-italic" v-if="orders.length === 0">
+            <h1>~ No Orders Were Found ~</h1>
+        </div>
+
         <main class="d-flex vh-70 justify-content-center overflow-auto" @scroll="scrolledToTop($event.target)">
             <div class="card-wrap mx-2" v-for="order in orders" :key="order.id">
                 <RouterLink class="text-decoration-none" :to="{ name: 'details', params: { bookId: order.book.id } }">
@@ -80,6 +84,7 @@ import { orderSocket } from '../main';
 
     async function finishOrder() {
         orderSocket.socket.emit('delete-order-by-user-id', selectedUser.value);
+        orders.value = [];
     }
 
     async function scrolledToTop(div) {

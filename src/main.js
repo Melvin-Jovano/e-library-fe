@@ -76,21 +76,18 @@ const appStore = appStores();
 export const orderSocket = new ClientSocket('/order', 3001);
 
 orderSocket.socket.on('created-order', (order) => {
-  console.log(order);
   if(order.user_id === sessionStores.userId) {
     appStore.orderCount++;
   }
 });
 
 orderSocket.socket.on('deleted-order', (order) => {
-  console.log(order);
   if(order.user_id === sessionStores.userId) {
     appStore.orderCount--;
   }
 });
 
 orderSocket.socket.on('total-order', (body) => {
-  console.log(body);
   if(body.user_id === sessionStores.userId) {
     appStore.orderCount = body.total;
   }
