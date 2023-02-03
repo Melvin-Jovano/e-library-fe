@@ -1,6 +1,9 @@
 * {
     background-color: #051522;
 }
+.vh-65 {
+    height: 65vh;
+}
 .vh-70 {
     height: 70vh;
 }

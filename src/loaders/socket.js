@@ -31,7 +31,7 @@ export default class ClientSocket {
                         this.connect();
                         return;
                     }
-                    this.socket.disconnect();
+                    return this.socket.disconnect();
                 }
             });
         });

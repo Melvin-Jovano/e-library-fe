@@ -1,8 +1,18 @@
 import axios from "axios"
 import { API_URL } from "../const.js"
 
-export async function getOrderCount() {
-    return await axios.get(`${API_URL}order/count`);
+export async function getOrderCount({userId}) {
+    const userIdFilter = (userId !== undefined)
+        ? {
+            user_id: userId
+        }
+        : {};
+
+    return await axios.get(`${API_URL}order/count`, {
+        params: {
+            ...userIdFilter
+        }
+    });
 }
 
 export async function getOrderByUserIdAndBookId({bookId}) {

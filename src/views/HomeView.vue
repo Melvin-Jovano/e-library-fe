@@ -21,10 +21,11 @@ const appStores = app();
 
 onMounted(async () => {
 	try {
-		const orderCount = await getOrderCount();
+		const orderCount = await getOrderCount({});
 		appStores.orderCount = orderCount.data.data;
 		orderSocket.connect();
 	} catch (error) {
+		console.error(error);
 		return;
 	}
 });

@@ -14,8 +14,11 @@ export async function registerUser({username, password}) {
 
 export async function logout() {
     const refreshToken = localStorage.getItem('refreshToken');
+    console.log(refreshToken);
     return await axios.delete(`${API_URL}auth/logout`, {
-        refreshToken
+        data: {
+            refreshToken
+        }
     });
 }
 
