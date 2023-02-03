@@ -169,7 +169,7 @@
     import plusLg from '../assets/icons/plusLg.vue';
     import IconClose from '../assets/icons/IconClose.vue';
     import IconWarning from '../assets/icons/IconWarning.vue';
-
+    // Test merge
     const props = defineProps(["bookId"])
     
     const data = reactive({
