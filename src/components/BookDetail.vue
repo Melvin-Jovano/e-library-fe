@@ -1,6 +1,11 @@
 <template>
-    <div v-if="data.bookData !== null" class="container" style="max-width: 1200px; padding-top: 70px;">
-        <div class="d-flex flex-wrap">
+    <div v-if="data.bookData !== null" class="container position-relative" style="max-width: 1200px; padding-top: 70px;">
+        <div class="position-absolute" style="top: 20px;">
+            <div class="rounded-circle backButton bgHover" @click="back">
+                <IconBack/>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap mt-4">
             <div class="imgWrapper">
                 <img :src="API_URL + data.bookData.cover" alt="Book Cover" class="h-100 w-100" style="border-radius: 25px;">
             </div>
@@ -24,9 +29,25 @@
                         <span>{{ data.bookData.stock || "0" }}</span>
                     </div>
                 </div>
-                <div class="my-3" style="min-height: 50px;">
+                <div v-if="role === 'USER'" class="my-3 d-flex" style="min-height: 50px;">
                     <button type="button" class="rounded-pill border-0 d-flex align-items-center borrowBtn bgHover lh-sm fw-bold text-white h-100">
                         Borrow Book
+                    </button>
+                </div>
+                <div v-else-if="role === 'ADMIN'" class="my-3 d-flex" style="min-height: 50px;">
+                    <button type="button" 
+                    class="rounded-pill border-0 d-flex align-items-center lh-sm fw-bold text-white h-100 btn btn-warning px-4"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#updateModal"
+                    >
+                        Edit Book
+                    </button>
+                    <button type="button" 
+                    class="ms-4 rounded-pill border-0 d-flex align-items-center lh-sm fw-bold text-white h-100 btn btn-danger px-4"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#deleteModal"
+                    >
+                        Delete Book
                     </button>
                 </div>
                 <div class="d-flex flex-column mt-4" v-if="data.bookData.description !== 'null'">
@@ -54,14 +75,100 @@
             </div>
         </div>
     </div>
+    <div class="modal fade bg-transparent" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered bg-transparent">
+            <div class="modal-content d-flex flex-column">
+                <h3 class="ms-3 mt-3 bg-transparent text-black">
+                    Update Book
+                </h3>
+                <span class="bg-transparent text-black ms-3 mt-2 fs-5">
+                    Book Stock
+                </span>
+                <div class="d-flex justify-content-center bg-transparent my-3">
+                    <button type="button"
+                    class="d-flex justify-content-center align-items-center text-black rounded-circle p-2 border-0"
+                    @click="subtractStock"
+                    style="background-color: #E1E8EE;"
+                    >
+                        <dashLg/>
+                    </button>
+                    <input type="text"
+                    min= "0"
+                    v-if="data.bookData !== null"
+                    class="rounded-pill form-control mx-3 text-black"
+                    v-model="editStock"
+                    style="width: 100px; text-align: center; background-color: aliceblue;"
+                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                    >
+                    <button type="button"
+                    class="d-flex justify-content-center align-items-center text-black rounded-circle p-2 border-0"
+                    @click="editStock++"
+                    style="background-color: #E1E8EE;"
+                    >
+                        <plusLg/>
+                    </button>
+                </div>
+                <div class="d-flex flex-row-reverse bg-transparent mb-4">
+                    <button type="button" 
+                    class="btn btn-info rounded-pill me-3" 
+                    @click="updateBookData" 
+                    >
+                        Update Book
+                    </button>
+                    <button type="button" 
+                    class="btn btn-danger rounded-pill me-3 px-3" 
+                    data-bs-dismiss="modal"
+                    @click="editStock = data.bookData.stock ">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bg-transparent" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered bg-transparent">
+            <div class="modal-content bg-transparent d-flex flex-column" style="max-height: 450px; border-radius: 25px;">
+                <div class="d-flex flex-fill justify-content-center align-items-center position-relative" 
+                style="border-radius: 25px 25px 0 0 ; min-height: 225px; background-color: #B73E3E;">
+                    <button type="button" class="position-absolute bg-transparent border-0" data-bs-dismiss="modal" 
+                    style="top: 5%; right: 2.5%;">
+                        <IconClose style="fill: white;"/>
+                    </button>
+                    <IconWarning/>
+                </div>
+                <div class="d-flex flex-fill flex-column align-items-center bg-white text-black"
+                style="border-radius: 0 0 25px 25px;">
+                    <h1 class="mt-4 bg-transparent text-black">
+                        Are You Sure ?
+                    </h1>
+                    <span class="bg-transparent text-black fs-5">
+                        This action cannnot be undone !
+                    </span>
+                    <button type="button" 
+                    class="rounded-pill border-0 d-flex align-items-center lh-sm fw-bold text-white h-100 btn btn-danger my-4" 
+                    style="padding: 10px 15px;"
+                    @click="deleteBookData"
+                    >
+                        Delete Book
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
     import { reactive, ref, onMounted } from 'vue';
-    import { getBookById } from '../api/books.js';
+    import { useRouter } from 'vue-router';
+    import { getBookById, updateBook, deleteBook } from '../api/books.js';
     import { API_URL } from '../const.js';
+    import IconBack from '../assets/icons/IconBack.vue';
     import chevronDown from '../assets/icons/chevronDown.vue';
     import chevronUp from '../assets/icons/chevronUp.vue';
+    import dashLg from '../assets/icons/dashLg.vue';
+    import plusLg from '../assets/icons/plusLg.vue';
+    import IconClose from '../assets/icons/IconClose.vue';
+    import IconWarning from '../assets/icons/IconWarning.vue';
 
     const props = defineProps(["bookId"])
     
@@ -69,9 +176,25 @@
         bookData : null
     })
     const readMore = ref(false)
+    const editStock = ref(null)
+    const updateModal = ref(null)
+    const deleteModal = ref(null)
+    const router = useRouter()
+
+    const role = localStorage.getItem("role")
+
+    function back(){
+        router.go(-1)
+    }
 
     function showReadMore(){
         readMore.value = !readMore.value
+    }
+
+    function subtractStock(){
+        if(editStock.value > 0){
+            editStock.value--
+        }
     }
 
     async function getBookData(val){
@@ -79,19 +202,55 @@
             const book = await getBookById(val)
             if(book.data.message === "SUCCESS") {
                 data.bookData = book.data.data;
+                editStock.value = data.bookData.stock
             } 
         } catch (error) {
             return;
         }
     }
+
+    async function updateBookData(){
+        try {
+            const update = await updateBook(props.bookId, editStock.value)
+            if(update.data.message === "SUCCESS"){
+                data.bookData.stock = update.data.data.stock
+                updateModal.value.hide()
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async function deleteBookData(){
+        try {
+            const del = await deleteBook(props.bookId)
+            if(del.data.message === "SUCCESS"){
+                deleteModal.value.hide()
+                router.replace("/")
+            }
+        } catch (error) {
+            
+        }
+    }
     onMounted(async () => {
         await getBookData(props.bookId);
+        updateModal.value = new bootstrap.Modal("#updateModal", {})
+        deleteModal.value = new bootstrap.Modal("#deleteModal", {})
     });
 </script>
 
 <style scoped>
     * {
         color: white;
+    }
+
+    .backButton{
+        min-width: 34px;
+        min-height: 34px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
     }
 
     .imgWrapper{

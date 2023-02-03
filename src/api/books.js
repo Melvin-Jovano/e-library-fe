@@ -22,3 +22,15 @@ export async function inputBook(data){
     })
     return newBook
 }
+
+export async function updateBook(id, val){
+    const book = await axios.put(`${API_URL}updatebook`,{
+        bookId : id,
+        stock : val
+    })
+    return book
+}
+
+export async function deleteBook(id){
+    return await axios.delete(`${API_URL}deletebook/${id}`)
+}
