@@ -183,11 +183,20 @@
                     Add New Author
                 </div>
                 <div class="form-floating mx-3 my-3 bg-transparent">
-                    <input type="text" class="form-control bg-transparent" id="newAuthor" placeholder="Input Name" v-model="authorName">
+                    <input type="text" 
+                    class="form-control bg-transparent" 
+                    id="newAuthor" 
+                    placeholder="Input Name" 
+                    v-model="authorName" 
+                    :class="{'is-invalid' : error.errInputAuthor && !authorName}"
+                    >
                     <label for="newAuthor" class="bg-transparent text-black">Insert Name</label>
+                    <div class="invalid-feedback bg-transparent">
+                        Author Already Exist
+                    </div>
                 </div>
                 <div class="d-flex flex-row-reverse bg-transparent mb-4">
-                    <button type="button" class="btn btn-info rounded-pill me-3" @click="addAuthor" :disabled="!authorName" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-info rounded-pill me-3" @click="addAuthor" :disabled="!authorName">
                         Add Author
                     </button>
                     <button type="button" 
@@ -227,7 +236,8 @@
         errAuthor : false,
         errPublish : false,
         errPages : false,
-        errStock : false
+        errStock : false,
+        errInputAuthor : false
     }
 
     const data = reactive({...initialData})
@@ -236,7 +246,8 @@
     const authorName = ref(null)
     const yearsList = ref([])
     const authorList = ref([])
-    const myModal = ref(null)
+    const successModal = ref(null)
+    const authorModal = ref(null)
     const fileUpload = ref(null)
 
     function getYears(){
@@ -290,7 +301,12 @@
             const author = await addNewAuthor(authorName.value)
             if(author.data.message === "SUCCESS"){
                 data.authorId = author.data.data.id
+                authorModal.value.hide()
                 getAuthors()
+            }
+            else if(author.data.message === "DUPLICATE"){
+                error.errInputAuthor = true
+                authorName.value = null
             }
         } catch (error) {
             
@@ -316,7 +332,7 @@
                     authorName.value = null
                     Object.assign(data, initialData)
                     Object.assign(error, initialError)
-                    myModal.value.show()
+                    successModal.value.show()
                 }
             } catch (error) {
                 console.log(error)
@@ -327,7 +343,8 @@
     onMounted(async () => {
         getYears()
         await getAuthors()
-        myModal.value = new bootstrap.Modal("#successModal", {})
+        successModal.value = new bootstrap.Modal("#successModal", {})
+        authorModal.value = new bootstrap.Modal("#addNewAuthor", {})
     });
 </script>
 
@@ -386,5 +403,9 @@
 
     .bgHover:hover{
         background-color: rgba(207, 185, 151, 0.8) !important;
+    }
+
+    .invalid-feedback{
+        color: red !important;
     }
 </style>

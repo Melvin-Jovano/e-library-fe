@@ -43,6 +43,9 @@ axios.interceptors.response.use(async response => {
       await logout();
       localStorage.clear();
       router.go('/login');
+    } 
+    else{
+      return err
     }
   } catch (error) {
     console.error(error);
