@@ -3,7 +3,6 @@ import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import HomeView from '../views/HomeView.vue';
 import BookDetail from '../components/BookDetail.vue';
-import InsertBook from '../components/InsertBook.vue';
 import OrderView from '../views/OrderView.vue'
 import UserOrderView from '../views/UserOrderView.vue';
 
@@ -56,14 +55,6 @@ const router = createRouter({
       name: 'register',
       component: RegisterView,
       meta: {
-        middleware: [checkSession]
-      }
-    },
-    {
-      path: '/insertbook',
-      name: 'insert',
-      component: InsertBook,
-      meta:{
         middleware: [checkSession]
       }
     }
