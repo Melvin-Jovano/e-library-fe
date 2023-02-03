@@ -91,15 +91,15 @@
         <div class="modal fade bg-transparent" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered bg-transparent">
                 <div class="modal-content d-flex flex-column">
-                    <h3 class="ms-3 mt-3 bg-transparent text-black">
+                    <h3 class="ms-3 mt-3 bg-transparent text-dark">
                         Update Book
                     </h3>
-                    <span class="bg-transparent text-black ms-3 mt-2 fs-5">
+                    <span class="bg-transparent text-dark ms-3 mt-2 fs-5">
                         Book Stock
                     </span>
                     <div class="d-flex justify-content-center bg-transparent my-3">
                         <button type="button"
-                        class="d-flex justify-content-center align-items-center text-black rounded-circle p-2 border-0"
+                        class="d-flex justify-content-center align-items-center text-dark rounded-circle p-2 border-0"
                         @click="subtractStock"
                         style="background-color: #E1E8EE;"
                         >
@@ -108,13 +108,13 @@
                         <input type="text"
                         min= "0"
                         v-if="data.bookData !== null"
-                        class="rounded-pill form-control mx-3 text-black"
+                        class="rounded-pill form-control mx-3 text-dark"
                         v-model="editStock"
                         style="width: 100px; text-align: center; background-color: aliceblue;"
                         onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
                         >
                         <button type="button"
-                        class="d-flex justify-content-center align-items-center text-black rounded-circle p-2 border-0"
+                        class="d-flex justify-content-center align-items-center text-dark rounded-circle p-2 border-0"
                         @click="editStock++"
                         style="background-color: #E1E8EE;"
                         >
@@ -149,12 +149,12 @@
                         </button>
                         <IconWarning/>
                     </div>
-                    <div class="d-flex flex-fill flex-column align-items-center bg-white text-black"
+                    <div class="d-flex flex-fill flex-column align-items-center bg-white text-dark"
                     style="border-radius: 0 0 25px 25px;">
-                        <h1 class="mt-4 bg-transparent text-black">
+                        <h1 class="mt-4 bg-transparent text-dark">
                             Are You Sure ?
                         </h1>
-                        <span class="bg-transparent text-black fs-5">
+                        <span class="bg-transparent text-dark fs-5">
                             This action cannnot be undone !
                         </span>
                         <button type="button" 

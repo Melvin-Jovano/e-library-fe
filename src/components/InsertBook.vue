@@ -169,12 +169,12 @@
                     </button>
                     <checkCircle/>
                 </div>
-                <div class="d-flex flex-fill flex-column align-items-center bg-white text-black"
+                <div class="d-flex flex-fill flex-column align-items-center bg-white text-dark"
                 style="border-radius: 0 0 25px 25px;">
-                    <h1 class="mt-4 bg-transparent text-black">
+                    <h1 class="mt-4 bg-transparent text-dark">
                         Success!
                     </h1>
-                    <span class="mb-5 bg-transparent text-black fs-5">
+                    <span class="mb-5 bg-transparent text-dark fs-5">
                         Book Successfully Added !
                     </span>
                 </div>
@@ -184,7 +184,7 @@
     <div class="modal fade bg-transparent" id="addNewAuthor" tabindex="-1" aria-labelledby="addNewAuthorLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered bg-transparent">
             <div class="modal-content d-flex flex-column">
-                <div class="ms-3 mt-3 bg-transparent text-black fs-4">
+                <div class="ms-3 mt-3 bg-transparent text-dark fs-4">
                     Add New Author
                 </div>
                 <div class="form-floating mx-3 my-3 bg-transparent">
@@ -195,7 +195,7 @@
                     v-model="authorName" 
                     :class="{'is-invalid' : error.errInputAuthor && !authorName}"
                     >
-                    <label for="newAuthor" class="bg-transparent text-black">Insert Name</label>
+                    <label for="newAuthor" class="bg-transparent text-dark">Insert Name</label>
                     <div class="invalid-feedback bg-transparent">
                         Author Already Exist
                     </div>

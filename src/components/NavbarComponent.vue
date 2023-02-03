@@ -7,45 +7,52 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav text-white w-100">
-                <li class="nav-item">
-                    <RouterLink class="nav-link text-white fw-bold" to="/">Books</RouterLink>
-                </li>
-
-                <!-- ADMIN / USER MENUS GOES HERE -->
-                <li class="nav-item" v-if="isAdmin">
-                    <RouterLink class="nav-link text-white fw-bold" to="/user-order">Orders</RouterLink>
-                </li>
-                <!-- ADMIN / USER MENUS GOES HERE -->
+            <ul class="navbar-nav text-white w-100 d-flex justify-content-between">
+                <div class="d-flex">
+                    <li class="nav-item">
+                        <RouterLink class="nav-link text-white fw-bold" to="/">Books</RouterLink>
+                    </li>
+                    <!-- ADMIN / USER MENUS GOES HERE -->
+                    <li class="nav-item" v-if="isAdmin">
+                        <RouterLink class="nav-link text-white fw-bold" to="/user-order">Orders</RouterLink>
+                    </li>
+                    <li class="nav-item" v-if="isAdmin">
+                        <RouterLink class="nav-link text-white fw-bold" to="/insertbook">
+                            Input Book
+                        </RouterLink>
+                    </li>
+                    <!-- ADMIN / USER MENUS GOES HERE -->
+                </div>
 
                 <!-- DIVIDER -->
-                <li class="w-100">&nbsp;</li>
-                <li class="nav-item">
-                    <div class="nav-link text-white cursor-pointer">
-                        <img :src="API_URL + sessionStores.photo" width="25" class="rounded-circle" alt="">
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <span class="nav-link text-white cursor-pointer">
-                        <small>
-                            {{ sessionStores.username }}
-                        </small>
-                    </span>
-                </li>
-                <li class="nav-item mx-3" v-if="!isAdmin">
-                    <RouterLink to="/order">
-                        <span class="nav-link text-white position-relative">
-                            <CartIcon />
-                            <span v-if="appStores.orderCount > 0"
-                                class="badge bg-info rounded px-1 position-absolute text-xxs">
-                                {{ appStores.orderCount }}
-                            </span>
+                <div class="d-flex">
+                    <li class="nav-item">
+                        <div class="nav-link text-white cursor-pointer">
+                            <img :src="API_URL + sessionStores.photo" width="25" class="rounded-circle" alt="">
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link text-white cursor-pointer">
+                            <small>
+                                {{ sessionStores.username }}
+                            </small>
                         </span>
-                    </RouterLink>
-                </li>
-                <li class="nav-item mx-3">
-                    <span class="nav-link text-white fw-bold cursor-pointer" @click="logout()">Logout</span>
-                </li>
+                    </li>
+                    <li class="nav-item mx-3" v-if="!isAdmin">
+                        <RouterLink to="/order">
+                            <span class="nav-link text-white position-relative">
+                                <CartIcon />
+                                <span v-if="appStores.orderCount > 0"
+                                    class="badge bg-info rounded px-1 position-absolute text-xxs">
+                                    {{ appStores.orderCount }}
+                                </span>
+                            </span>
+                        </RouterLink>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <span class="nav-link text-white fw-bold cursor-pointer" @click="logout()">Logout</span>
+                    </li>
+                </div>
             </ul>
         </div>
     </nav>
